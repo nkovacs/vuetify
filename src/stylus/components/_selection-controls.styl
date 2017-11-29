@@ -68,21 +68,31 @@ theme(selection-control, "input-group--selection-controls")
 .input-group.input-group--selection-controls label
   cursor: pointer
   position: absolute
-  left: 32px
+  left: 27px
+  padding-left: 5px
   user-select: none
   z-index: 1
   pointer-events: all
 
 .input-group--selection-controls__ripple
-  border-radius: 50%
-  height: 48px
-  width: 48px
+  height: 30px
+  width: 30px
   cursor: pointer
   position: absolute
-  transform: translate(-12px, -50%)
+  transform: translate(-3px, -50%)
   transform-origin: center center
   top: 50%
   left: 0
+
+  .ripple__container
+    width: 48px
+    height: 48px
+    left: -9px
+    top: -9px
+
+    .ripple__animation
+      width: 48px !important
+      height: 48px !important
 
   &:before
     content: ''
