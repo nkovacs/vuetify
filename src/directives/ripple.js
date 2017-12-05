@@ -10,6 +10,31 @@ function style (el, value) {
 const ripple = {
   /**
    * @param {Event} e
+   * @return { x,y : number }
+   */
+  getEventPos: (e, boundingRect) => {
+    let touch
+    if (e.changedTouches && e.changedTouches.length > 0) {
+      touch = e.changedTouches[0]
+    } else if (e.touches && e.touches.length > 0) {
+      touch = e.touches[0]
+    }
+    if (e.clientX !== undefined && e.clientY !== undefined) {
+      touch = e
+    }
+    if (touch) {
+      return {
+        x: touch.clientX,
+        y: touch.clientY
+      }
+    }
+    return {
+      x: boundingRect.left + boundingRect.width / 2,
+      y: boundingRect.top + boundingRect.height / 2
+    }
+  },
+  /**
+   * @param {Event} e
    * @param {Element} el
    * @param {{ class?: string, center?: boolean }} [value={}]
    */
@@ -40,8 +65,9 @@ const ripple = {
     if (computed.position !== 'absolute' && computed.position !== 'fixed') el.style.position = 'relative'
 
     const offset = el.getBoundingClientRect()
-    const x = value.center ? '50%' : `${e.clientX - offset.left}px`
-    const y = value.center ? '50%' : `${e.clientY - offset.top}px`
+    const loc = value.center ? false : ripple.getEventPos(e, offset)
+    const x = loc ? `${loc.x - offset.left}px` : '50%'
+    const y = loc ? `${loc.y - offset.top}px` : '50%'
 
     animation.classList.add('ripple__animation--enter')
     animation.classList.add('ripple__animation--visible')
@@ -86,9 +112,30 @@ function isRippleEnabled (value) {
   return typeof value === 'undefined' || !!value
 }
 
+function isSyntheticEvent (el, e) {
+  const sc = e.sourceCapabilities
+  if (sc && !sc.firesTouchEvents) {
+    return false
+  }
+  if (el.__preventSyntheticMouseEvents) {
+    return true
+  }
+  return false
+}
+
+function preventSyntheticEvent (el) {
+  el.__preventSyntheticMouseEvents = true
+  setTimeout(() => {
+    delete el.__preventSyntheticMouseEvents
+  }, 2500)
+}
+
 function rippleShow (e) {
   const value = {}
   const element = e.currentTarget
+  if (e.type === 'mousedown' && isSyntheticEvent(element, e)) {
+    return
+  }
   value.center = element.__ripple.centered
   if (element.__ripple.class) {
     value.class = element.__ripple.class
@@ -97,6 +144,9 @@ function rippleShow (e) {
 }
 
 function rippleHide (e) {
+  if (e.type === 'touchend') {
+    preventSyntheticEvent(e.currentTarget)
+  }
   ripple.hide(e.currentTarget)
 }
 
@@ -116,6 +166,7 @@ function updateRipple (el, binding, wasEnabled) {
   }
   if (enabled && !wasEnabled) {
     if ('ontouchstart' in window) {
+      el.addEventListener('touchstart', rippleShow, false)
       el.addEventListener('touchend', rippleHide, false)
       el.addEventListener('touchcancel', rippleHide, false)
     }
