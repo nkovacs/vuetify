@@ -74,10 +74,15 @@ export default {
       this.tabFocused = false
     },
     genLabel () {
+      const on = {}
+      if (!this.$attrs.id) {
+        on.click = () => (this.isFocused = true)
+      }
       return this.$createElement('label', {
         attrs: {
           for: this.$attrs.id
-        }
+        },
+        on
       }, this.$slots.label || this.label)
     },
     genMessages () {

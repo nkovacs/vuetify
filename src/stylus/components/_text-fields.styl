@@ -123,24 +123,34 @@ theme(textfield, "input-group--text-field")
       &:not(.input-group--textarea)
         label
           transform: translate(0, -18px) scale(.75)
+          pointer-events: auto
+          width: auto
 
       &:not(.input-group--full-width).input-group--textarea
         label
           transform: translate(0, -8px) scale(.75)
+          pointer-events: auto
+          width: auto
 
       &.input-group--text-field-box
         label
           transform: translate(0, -10px) scale(.75)
+          pointer-events: auto
+          width: auto
 
   &.input-group--dirty
     &.input-group--select,
     &:not(.input-group--textarea)
       label
         transform: translate(0, -18px) scale(.75)
+        pointer-events: auto
+        width: auto
 
     &:not(.input-group--full-width).input-group--textarea
       label
         transform: translate(0, -8px) scale(.75)
+        pointer-events: auto
+        width: auto
 
   // Multi Line
   &.input-group--multi-line
@@ -227,6 +237,8 @@ theme(textfield, "input-group--text-field")
       &.input-group--dirty
         label
           transform: translate(0, -10px) scale(0.75)
+          pointer-events: auto
+          width: auto
   // Icons
   &.input-group--prepend-icon
     .input-group__details
